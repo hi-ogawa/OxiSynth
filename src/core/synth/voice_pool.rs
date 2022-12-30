@@ -21,7 +21,7 @@ pub struct VoicePool {
 impl VoicePool {
     pub fn new(len: usize, sample_rate: f32) -> Self {
         Self {
-            voices: Vec::new(),
+            voices: Vec::with_capacity(len), // PATCH(hiroshi): avoid heap allocation on `push` (TODO: better to use Vec<Option<Voice>> for explicit preallocation)
             sample_rate,
             polyphony_limit: len,
 
