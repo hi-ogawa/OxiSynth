@@ -16,6 +16,7 @@ pub(crate) use {
 
 pub use preset::Preset;
 
+#[derive(Clone)]
 pub struct SoundFont {
     // PATCH(hiroshi): allow simple enumeration of all presets
     pub presets: Vec<Arc<Preset>>,
