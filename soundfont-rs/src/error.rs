@@ -5,6 +5,8 @@ use riff::Chunk;
 
 #[derive(Debug)]
 pub enum ParseError {
+    OtherError(String),
+    IOError(std::io::Error),
     StringError(Utf8Error),
     NumSliceError(TryFromSliceError),
 
@@ -34,5 +36,11 @@ impl From<Utf8Error> for ParseError {
 impl From<TryFromSliceError> for ParseError {
     fn from(err: TryFromSliceError) -> Self {
         Self::NumSliceError(err)
+    }
+}
+
+impl From<std::io::Error> for ParseError {
+    fn from(err: std::io::Error) -> Self {
+        Self::IOError(err)
     }
 }
