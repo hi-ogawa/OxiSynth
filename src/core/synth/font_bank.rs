@@ -18,6 +18,12 @@ impl FontBank {
         }
     }
 
+    pub fn reset(&mut self) {
+        self.fonts = TypedArena::new();
+        self.stack = Vec::new();
+        self.bank_offsets = BankOffsets::default();
+    }
+
     pub fn add_font(&mut self, font: SoundFont) -> TypedIndex<SoundFont> {
         let id = self.fonts.insert(font);
 
