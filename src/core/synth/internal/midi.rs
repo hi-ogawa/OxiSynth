@@ -1,5 +1,3 @@
-use std::convert::TryInto;
-
 use crate::core::chorus::Chorus;
 use crate::core::error::OxiError;
 use crate::core::reverb::Reverb;
@@ -68,8 +66,7 @@ fn inner_noteon(
     let preset = &channel.preset().unwrap();
 
     // list for 'sorting' preset modulators
-    let mod_list_new: Vec<Option<&Mod>> = (0..64).into_iter().map(|_| None).collect();
-    let mut mod_list: [Option<&Mod>; 64] = mod_list_new.try_into().unwrap();
+    let mut mod_list: [Option<&Mod>; 64] = [None; 64];
 
     let mut global_preset_zone = preset.global_zone();
 

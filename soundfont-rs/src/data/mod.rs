@@ -20,9 +20,18 @@ pub struct SFData {
 
 impl SFData {
     pub fn load<F: Read + Seek>(file: &mut F) -> Result<Self, ParseError> {
-        let sfbk = riff::Chunk::read(file, 0).unwrap();
-        assert_eq!(sfbk.id().as_str(), "RIFF");
-        assert_eq!(sfbk.read_type(file).unwrap().as_str(), "sfbk");
+        let sfbk = riff::Chunk::read(file, 0)?;
+        if sfbk.id() != riff::RIFF_ID {
+            return Err(ParseError::OtherError(
+                "expected 'RIFF' chunk id".to_string(),
+            ));
+        }
+        let chunk_type = sfbk.read_type(file)?;
+        if chunk_type.value != "sfbk".as_bytes() {
+            return Err(ParseError::OtherError(
+                "expected 'sfbk' chunk type".to_string(),
+            ));
+        }
 
         let chunks: Vec<_> = sfbk.iter(file).collect();
 
@@ -31,8 +40,12 @@ impl SFData {
         let mut hydra = None;
 
         for ch in chunks.into_iter() {
-            assert_eq!(ch.id().as_str(), "LIST");
-            let ty = ch.read_type(file).unwrap();
+            if ch.id() != riff::LIST_ID {
+                return Err(ParseError::OtherError(
+                    "expected 'LIST' chunk id".to_string(),
+                ));
+            }
+            let ty = ch.read_type(file)?;
             match ty.as_str() {
                 "INFO" => {
                     info = Some(Info::read(&ch, file)?);
